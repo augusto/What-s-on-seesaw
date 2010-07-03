@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" >
+    <string name="app_name">What\'s on SeeSaw</string>
+    <string name="app_descrip">Search what content is available on SeeSaw.com</string>
+    <string name="app_credits">"The list of content is provided by http://www.seesaw.com. \n\nThe SeeSaw logo is a registered trademark of SeeSaw.com</string>
+    <string name="search_title">Search On SeeSaw:</string>
+    
+    
+    
+    <string name="template_user_agent">"%s/%s (Linux; Android)"</string>
+    
+    <string name="menu_about">About</string>
+</resources>
