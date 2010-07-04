@@ -7,6 +7,7 @@ import uk.co.seesaw.android.whatsonseesaw.SeesawSeachHelper.ParseException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -130,5 +131,15 @@ public class WhatsOnSeesaw extends Activity {
 		}
     	
     }
+	
+	//TODO async task
+	private class LookupTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... args) {
+			return null;
+		}
+		
+	}
     
 }
