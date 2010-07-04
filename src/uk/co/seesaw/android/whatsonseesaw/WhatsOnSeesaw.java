@@ -16,16 +16,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class WhatsOnSeesaw extends Activity {
 	final static String TAG = "WhatsOnSeesaw";
     private EditText searchEntry;
-	private TableLayout searchResult;
+	private ListView searchResults;
 	private Context context;
+	private Animation magnify;
 
 	/** Called when the activity is first created. */
     @Override
@@ -34,8 +39,9 @@ public class WhatsOnSeesaw extends Activity {
         setContentView(R.layout.main);
         
         searchEntry = (EditText)findViewById(R.id.searchEntry);
-        searchResult = (TableLayout)findViewById(R.id.searchResults);
+        searchResults = (ListView)findViewById(R.id.searchResults);
         searchEntry.addTextChangedListener(new SearchEntryTextWatcher());
+        magnify = AnimationUtils.loadAnimation( this, R.anim.magnify );
         
         context = this;
         SeesawSeachHelper.prepareUserAgent(context);
@@ -86,7 +92,9 @@ public class WhatsOnSeesaw extends Activity {
         builder.show();
     }
 
-	private class SearchEntryTextWatcher implements TextWatcher {
+	private class SearchEntryTextWatcher implements TextWatcher, AdapterView.OnItemSelectedListener, OnItemClickListener {
+
+		private List<SearchResult> results;
 
 		@Override
 		public void afterTextChanged(Editable text) {
@@ -95,19 +103,12 @@ public class WhatsOnSeesaw extends Activity {
 			Log.i(TAG, "textToSeach: " + textToSearch );
 			
 			try{
-				List<SearchResult> results = SeesawSeachHelper.getResults(textToSearch);
-				searchResult.removeAllViews();
+				results = SeesawSeachHelper.getResults(textToSearch);
 				
-				for( SearchResult result : results) {
-					TextView resultView = new TextView(context);
-					resultView.setText(result.title);
-					
-					TableRow resultRow = new TableRow(context);
-					resultRow.addView(resultView);
-					//resultRow.setOnClickListener()
-					
-					searchResult.addView(resultRow);					
-				}
+				ArrayAdapter resultsAdapter = new ArrayAdapter( context, R.layout.row, results );
+				searchResults.setAdapter(resultsAdapter);
+				searchResults.setOnItemSelectedListener( this );
+				searchResults.setOnItemClickListener(this);
 
 			} catch (ApiException e) {
 				Log.e(TAG, "api exception", e);
@@ -128,6 +129,28 @@ public class WhatsOnSeesaw extends Activity {
 		public void onTextChanged(CharSequence s, int start, int before,
 				int count) {
 			Log.i(TAG, "called onTextChanged");
+		}
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+			Log.i(TAG, "called onItemSelected");
+			v.startAnimation(magnify);
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> arg0) {
+			Log.i(TAG, "called onNothingSelected");
+			
+		}
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			Log.i(TAG, "called onItemClick");
+			if( position < results.size()) {
+				Log.i(TAG, "clicked on " + results.get(position));
+			} else {
+				Log.i(TAG, "I don't have an item at poisition " + position);
+			}
 		}
     	
     }

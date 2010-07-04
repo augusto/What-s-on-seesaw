@@ -17,13 +17,12 @@
         android:background="@android:drawable/editbox_background"
         android:layout_below="@id/seesaw_logo"/>
         
-    <TableLayout
+    <ListView
         android:id="@+id/searchResults"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1"
-        android:layout_below="@id/searchEntry">
-    </TableLayout>
+        android:layout_below="@id/searchEntry" >
+    </ListView>
 
 </RelativeLayout>
 

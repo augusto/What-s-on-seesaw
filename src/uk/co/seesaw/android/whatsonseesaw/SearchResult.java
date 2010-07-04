@@ -9,4 +9,9 @@ public class SearchResult {
 		this.title = title;
 		this.url = url;
 	}
+	
+	@Override
+	public String toString() {
+		return title;
+	}
 }
