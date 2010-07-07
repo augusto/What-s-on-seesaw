@@ -20,7 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +65,8 @@ public class SeesawSeachHelper {
      */
     private static String sUserAgent = null;
 
+    private static Map<String, List<SearchResult>> cache = new HashMap<String, List<SearchResult>>();
+    
     /**
      * Thrown when there were problems contacting the remote API server, either
      * because of a network error, or the server returned a bad status code.
@@ -110,7 +114,21 @@ public class SeesawSeachHelper {
 
     public static List<SearchResult> getResults(String title)
             throws ApiException, ParseException {
-        // Encode page title and expand templates if requested
+    	
+    	List<SearchResult> results;
+    	if( cache.containsKey(title)) {
+    		results =  cache.get(title);
+    	} else {
+    		results = fetchResults(title);
+    		cache.put(title,results);
+    	}
+        
+        return results;
+    }
+
+	private static List<SearchResult> fetchResults(String title)
+			throws ApiException, ParseException {
+		// Encode page title and expand templates if requested
         String encodedTitle = Uri.encode(title);
 
         // Query the API for content
@@ -133,7 +151,7 @@ public class SeesawSeachHelper {
         } catch (JSONException e) {
             throw new ParseException("Problem parsing API response", e);
         }
-    }
+	}
 
     /**
      * Pull the raw text content of the given URL. This call blocks until the

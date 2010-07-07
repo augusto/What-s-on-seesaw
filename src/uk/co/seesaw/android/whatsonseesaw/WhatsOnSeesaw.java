@@ -1,5 +1,6 @@
 package uk.co.seesaw.android.whatsonseesaw;
 
+import java.util.Collections;
 import java.util.List;
 
 import uk.co.seesaw.android.whatsonseesaw.SeesawSeachHelper.ApiException;
@@ -31,6 +32,7 @@ public class WhatsOnSeesaw extends Activity {
 	private ListView searchResults;
 	private Context context;
 	private Animation magnify;
+	private SearchResultListHandler searchResultsListHandler;
 
 	/** Called when the activity is first created. */
     @Override
@@ -42,6 +44,7 @@ public class WhatsOnSeesaw extends Activity {
         searchResults = (ListView)findViewById(R.id.searchResults);
         searchEntry.addTextChangedListener(new SearchEntryTextWatcher());
         magnify = AnimationUtils.loadAnimation( this, R.anim.magnify );
+        searchResultsListHandler = new SearchResultListHandler();
         
         context = this;
         SeesawSeachHelper.prepareUserAgent(context);
@@ -92,30 +95,16 @@ public class WhatsOnSeesaw extends Activity {
         builder.show();
     }
 
-	private class SearchEntryTextWatcher implements TextWatcher, AdapterView.OnItemSelectedListener, OnItemClickListener {
+	private class SearchEntryTextWatcher implements TextWatcher {
 
-		private List<SearchResult> results;
+		//private List<SearchResult> results;
 
 		@Override
 		public void afterTextChanged(Editable text) {
 			Log.i(TAG, "called afterTextChanged");
 			String textToSearch = text.toString();
 			Log.i(TAG, "textToSeach: " + textToSearch );
-			
-			try{
-				results = SeesawSeachHelper.getResults(textToSearch);
-				
-				ArrayAdapter resultsAdapter = new ArrayAdapter( context, R.layout.row, results );
-				searchResults.setAdapter(resultsAdapter);
-				searchResults.setOnItemSelectedListener( this );
-				searchResults.setOnItemClickListener(this);
-
-			} catch (ApiException e) {
-				Log.e(TAG, "api exception", e);
-			} catch (ParseException e) {
-				Log.e(TAG, "parse exception", e);
-			} 
-
+			new LookupTask().execute(textToSearch);
 		}
 
 		@Override
@@ -130,7 +119,22 @@ public class WhatsOnSeesaw extends Activity {
 				int count) {
 			Log.i(TAG, "called onTextChanged");
 		}
+    }
+	
+	private class SearchResultListHandler implements AdapterView.OnItemSelectedListener, OnItemClickListener {
 
+		private List<SearchResult> results;
+		
+		public void update(List<SearchResult> results) {
+			this.results = results;
+
+			ArrayAdapter resultsAdapter = new ArrayAdapter( context, R.layout.row, results );
+			searchResults.setAdapter(resultsAdapter);
+			searchResults.setOnItemSelectedListener( searchResultsListHandler );
+			searchResults.setOnItemClickListener(searchResultsListHandler );
+
+		}
+		
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 			Log.i(TAG, "called onItemSelected");
@@ -151,18 +155,32 @@ public class WhatsOnSeesaw extends Activity {
 			} else {
 				Log.i(TAG, "I don't have an item at poisition " + position);
 			}
-		}
-    	
-    }
+		}		
+	}
 	
 	//TODO async task
-	private class LookupTask extends AsyncTask<String, String, String> {
+	private class LookupTask extends AsyncTask<String, Void, Void> {
 
+		private List<SearchResult> results = Collections.EMPTY_LIST;
+		
 		@Override
-		protected String doInBackground(String... args) {
+		protected Void doInBackground(String... text) {
+			String textToSearch = text[0];
+			
+			try{
+				results = SeesawSeachHelper.getResults(textToSearch);
+			} catch (ApiException e) {
+				Log.e(TAG, "api exception", e);
+			} catch (ParseException e) {
+				Log.e(TAG, "parse exception", e);
+			} 
+
 			return null;
 		}
 		
+		@Override
+		protected void onPostExecute(Void result) {
+			searchResultsListHandler.update(results);
+		}
 	}
-    
 }
