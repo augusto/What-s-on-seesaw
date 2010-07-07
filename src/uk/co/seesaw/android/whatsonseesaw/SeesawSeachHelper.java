@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class SeesawSeachHelper {
@@ -114,10 +116,14 @@ public class SeesawSeachHelper {
 
     public static List<SearchResult> getResults(String title)
             throws ApiException, ParseException {
+    	if( TextUtils.isEmpty(title)) {
+    		return Collections.EMPTY_LIST;
+    	}
     	
     	List<SearchResult> results;
     	if( cache.containsKey(title)) {
     		results =  cache.get(title);
+    		Log.i(TAG, "returning cached result for '" + title + "'");
     	} else {
     		results = fetchResults(title);
     		cache.put(title,results);

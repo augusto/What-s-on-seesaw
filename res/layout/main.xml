@@ -12,10 +12,26 @@
         
     <EditText
         android:id="@+id/searchEntry"
-        android:layout_width="fill_parent"
+        android:maxLength="15"
+        android:singleLine="true"
+        android:layout_width="295dip"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
         android:layout_below="@id/seesaw_logo"/>
+        
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="23dip"
+        android:layout_height="23dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginTop="3dip"
+        android:visibility="invisible"
+        android:indeterminateOnly="true"
+        android:indeterminateDrawable="@drawable/progress_spin"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateDuration="3500"
+        android:layout_toRightOf="@id/searchEntry"
+        android:layout_alignTop="@id/searchEntry"/>
         
     <ListView
         android:id="@+id/searchResults"

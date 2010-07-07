@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -32,6 +33,7 @@ public class WhatsOnSeesaw extends Activity {
 	private ListView searchResults;
 	private Context context;
 	private Animation magnify;
+	private ProgressBar searchProgressBar;
 	private SearchResultListHandler searchResultsListHandler;
 
 	/** Called when the activity is first created. */
@@ -45,6 +47,7 @@ public class WhatsOnSeesaw extends Activity {
         searchEntry.addTextChangedListener(new SearchEntryTextWatcher());
         magnify = AnimationUtils.loadAnimation( this, R.anim.magnify );
         searchResultsListHandler = new SearchResultListHandler();
+        searchProgressBar = (ProgressBar) findViewById(R.id.progress);
         
         context = this;
         SeesawSeachHelper.prepareUserAgent(context);
@@ -104,6 +107,7 @@ public class WhatsOnSeesaw extends Activity {
 			Log.i(TAG, "called afterTextChanged");
 			String textToSearch = text.toString();
 			Log.i(TAG, "textToSeach: " + textToSearch );
+			searchProgressBar.setVisibility(View.VISIBLE);
 			new LookupTask().execute(textToSearch);
 		}
 
@@ -180,6 +184,7 @@ public class WhatsOnSeesaw extends Activity {
 		
 		@Override
 		protected void onPostExecute(Void result) {
+			searchProgressBar.setVisibility(View.INVISIBLE);
 			searchResultsListHandler.update(results);
 		}
 	}
