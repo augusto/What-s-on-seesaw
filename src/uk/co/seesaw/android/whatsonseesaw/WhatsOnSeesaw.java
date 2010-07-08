@@ -8,6 +8,8 @@ import uk.co.seesaw.android.whatsonseesaw.SeesawSeachHelper.ParseException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -155,7 +157,10 @@ public class WhatsOnSeesaw extends Activity {
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			Log.i(TAG, "called onItemClick");
 			if( position < results.size()) {
-				Log.i(TAG, "clicked on " + results.get(position));
+				SearchResult result = results.get(position);
+				Log.i(TAG, "clicked on " + result);
+				Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(result.url));
+				startActivity(myIntent);
 			} else {
 				Log.i(TAG, "I don't have an item at poisition " + position);
 			}

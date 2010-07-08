@@ -14,7 +14,7 @@
         android:id="@+id/searchEntry"
         android:maxLength="15"
         android:singleLine="true"
-        android:layout_width="295dip"
+        android:layout_width="290dip"
         android:layout_height="wrap_content"
         android:background="@android:drawable/editbox_background"
         android:layout_below="@id/seesaw_logo"/>
@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/searchEntry" >
     </ListView>
+
 
 </RelativeLayout>
 
